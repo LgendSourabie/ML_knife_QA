@@ -4,11 +4,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 import tensorflow as tf
 
-#1. Entscheiden Sie sich für ein Framework zum Training eines Neuronalen Netzes (PyTorch, TensorFlow,
-# etc.), dass Sie verwenden werden und lesen Sie die Daten der extruder.csv ein.
-
-
-dataframe = pd.read_csv('chiefs_knife_dataset.csv',delimiter=';')
+dataframe = pd.read_excel('../../data/chiefs_knife_dataset.xlsx')
 
 index_Ra = dataframe.columns.get_loc('Ra')
 lower_specification_limit = 0.125 # lower bound of good quality product region
@@ -26,9 +22,6 @@ y_class = dataframe['Good_Quality'].values
 # y_class = dataset.iloc[:,-1].values
 
 
-# 3. Definieren Sie als nächstes die Hyperparamter des Neuronalen Netzes. Dies ist erforderlich, da die
-# Struktur des Neuronalen Netzes unklar ist.
-
 # def optimizer_choice(learning_rate = 1e-3, choice = 'SGD'):
 #     if choice.lower() == 'sgd':
 #         tf.keras.optimizers.SGD(learning_rate=learning_rate)
@@ -41,12 +34,12 @@ y_class = dataframe['Good_Quality'].values
 # initial hyperparameters
 optimizer = 'SGD'
 activation = 'relu'
-hidden_layers = [6, 16]  # verteckte Ebenen (hidden layers)
+hidden_layers = [6, 16]  # (hidden layers)
 learning_rate = [1e-2, 1e-3, 1e-4,1e-5]
 batch_size = 32
 epochs = 50
 
-# hyperparameter, um Modell zu optimieren (wird später weiterverwendet)
+# hyperparameters
 hyperparameters = {
 'optimizer':{
     'sgd_0':[tf.keras.optimizers.SGD(learning_rate=learning_rate[0]),
@@ -83,29 +76,21 @@ hyperparameters = {
            tf.keras.optimizers.Adam(learning_rate=learning_rate[3])],
 },
 'activation': ['relu','tanh'],
-'hidden_layers' : [128,64,32],  # verteckte Ebenen (hidden layers)
+'hidden_layers' : [128,64,32],  # (hidden layers)
 'batch_size' : [32, 16],
 'epochs' : [100, 200],
 }
 
-# 4. Unterteilen Sie die Daten in Trainings- und Testdaten.
+
 
 
 X_train, X_test, y_train, y_test = train_test_split(X,target_regression, test_size=0.2,shuffle=True,random_state=0)
 
 
-# 5. Untersuchen Sie die Trainingsergebnisse Ihres Neuronalen Netzes und diskutieren deren
-# Qualität/Modellfehler.
-
-
-''' ich habe eine Skalierung vorgenommen, da die Werte von unterschiedliche Einheiten und auch unterschiedlich 
-    groß sind. Ohne Skalierung würde die großere Werte den Lernalgorithmus beeinflussen oder steuern.'''
-
 sc = StandardScaler()
 X_train = sc.fit_transform(X_train)
 X_test = sc.transform(X_test)
 
-# eine Funktion zur vereinfachung der Wahl von Parameter beim Trainieren
 
 def create_model(optimizer=optimizer, activation=activation, neurons=hidden_layers,batch_size = batch_size,epochs = epochs):
     # create model
@@ -119,7 +104,7 @@ def create_model(optimizer=optimizer, activation=activation, neurons=hidden_laye
     history = model.fit(X_train, y_train,batch_size = batch_size, validation_split=0.1, epochs=epochs, verbose = 1)
     return history,model
 
-#Vorhersage von Testdaten
+
 def predictor(model, test_feature=X_test):
     return model.predict(test_feature)
 
@@ -163,24 +148,6 @@ axes[1].legend(fontsize=12)
 plt.savefig(f'initial_model.png', dpi=300)
 
 
-# Diskussion:
-
-'''
-Das erste Modell wurde mit stochastic gradient descent trainiert (mit standard learning rate= 0.01) mit ein
-batch_size = 32, ein epoch = 50 und mit ReLu als Aktivierungsfunction. Allerdings overfit das Modell, weil
-wenn man sich die Kurven von Loss-epoch für die Trainings- und validationsdaten anschaut 
-sieht man, dass beide Kurven nicht zusammen konvergieren. Das Modell verhält sich besser 
-bei den Trainingsdaten. Bei den validationsdaten scatter die Kurve was ein overfitting darstellt.
-Der Vergleich von vorhesage mit den Testdaten-ausgang y_test ist schwierig zu bewerten, da 
-manche Werte werden akzeptabel abgebildet manche jedoch nicht. 
-
-Um das Modell zu verbessern, müssen die Hyperparameter angepasst werden.
-'''
-
-# 6. Erproben Sie weitere 2 Netzkonfigurationen (Hyperparameter) und diskutieren Sie alle Ergebnisse
-# anhand der folgenden Fragestellung:
-
-
 def parameter_tuning(optimizer_name,activation_index = 0, batch_index = 0, epoch_index = 0):
     training_history_list = []
 
@@ -206,7 +173,7 @@ def row_plot(ax,row,training_history,activation, optimizer_name,batch_size):
 
 
 '''
-hier werden nur 32 Modelle (2 waren gefragt) aus der unterschiedlichen Möglichkeiten (siehe Hyperparametzer) angeschaut
+
 '''
 
 training_history_0= parameter_tuning(optimizer_name='sgd_0',activation_index=0,batch_index=0,epoch_index=0)
@@ -215,8 +182,6 @@ training_history_2= parameter_tuning(optimizer_name='sgd_1',activation_index=0,b
 training_history_3= parameter_tuning(optimizer_name='adam_1',activation_index=0,batch_index=1,epoch_index=1)
 
 fig, ax = plt.subplots(4,len(learning_rate), figsize=(20, 15))
-
-# neu Optimizer muss definiert werden, da sie nur einmal verwendet werden dürfen 
 
 
 def save_gragh(fig_axes,training_history0,training_history1,training_history2,training_history3,activation):
@@ -242,44 +207,6 @@ save_gragh(fig_axes= bx,training_history0 = training_history_10,training_history
 
 
 
-
-# • Kann ein Overfitting durch das Modell ausgeschlossen werden und wie begründen Sie dies?
-
-'''
-Ausgehend von den Darstellung der Loss-epoch für beide Trainings- und Validierungsdaten kann man sagen, dass 
-in dieser Studie ein Overfitting ausgeschlossen werden kann. Da das Overfitting wurde nur für einige learning_rate beobachtet 
-und diese wurde nicht weiter genutzt. Nur die beste Modell wurde genutzt, die den kleinste Fehler in Validierungsdaten aufweist.
-
-Für Relu: Das Modell overfit für ein learning_rate = 0.01 unabhängig von anderen Parametern. Es overfit auch für ein learning_rate= 0.001
-für alle außer der Optimierung=SGD, batch_size=16
-
-Für tanh: Das Modell overfit für ein learning_rate = 0.01 unabhängig von anderen Parametern. Es overfit auch für ein learning_rate= 0.001
-für alle außer der Optimierung=SGD, batch_size=16
-
-'''
-
-
-# • Ist der Modellfehler ausreichend klein, um das Modell auch sinnvoll anzuwenden?
-
-'''
-In dem Fall habe ich eine Regressionsanalyse vorgenommen. Daher ist es sehr schwierig zu sagen ob die Werte ausreichend klein sind
-da keine Maßtab dafür gibt. Hätte eine Klassifizierung gewesen, dann könnte man miHilfe der Konfusionsmatrix schnell bewerten.
-Hier kann man auch den R^2 anszeigen lassen aber da die Berechnung viel Zeit nimmt und schon gemacht wurde habe ich nicht mitgenommen.
-'''
-
-
-# • Würden Sie das Modell einsetzen, wenn Sie mit Ihrer Firma für mehr als 5% fehlerhafter
-# Qualitätsaussagen aufkommen müssten (produzierter Ausschuss trotz prognostizierter hoher
-# Qualität)?
-
-# Ausgehend von den Abbildungen wähle ich folgende Parameter:
-'''
-activation: tanh
-optimizer: SGD
-learning_rate: 1e-4
-neurons:[128,64,32]
-batch_size:16
-'''
 end_training_history, end_model = create_model(optimizer=tf.keras.optimizers.SGD(learning_rate=1e-4),
                                                activation='tanh',
                                                neurons=[128,64,32],
@@ -315,17 +242,3 @@ axes[1].set_xlabel('True Target Values',fontsize=12)
 axes[1].set_ylabel('Predicted Target Values',fontsize=12)
 axes[1].legend(fontsize=12)
 plt.savefig(f'initial_model.png', dpi=300)
-
-
-#ja das Modell würde ich anwenden wegen sehr kleine fehler
-
-
-
-# • Welche Maßnahmen sind aus Ihrer Sicht erforderlich, um das Modell weiter zu verbessern?
-
-'''
- --> mehr Daten für das trainieren kann das Modell verbessern
- --> alle sinnvolle Kombinierung von Hyperparametern anschauen (hyperparameter tunning)
- --> das Modell Architektur ändern
-
-'''
