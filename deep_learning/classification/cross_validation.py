@@ -73,24 +73,40 @@ model = KerasRegressor(build_fn=create_model, verbose=1)
 
 # Define the grid search parameters
 search_parameter = {
+<<<<<<< HEAD
     'batch_size': [8],
+=======
+    'batch_size': [8,16],
+>>>>>>> 1d17095b9bdb7d5d42fd5c80d889ede04da21c7f
     'epochs': [50,100],
 }
 
 
 # we perform here a grid search for 5-folds
+<<<<<<< HEAD
 grid = GridSearchCV(estimator=model, param_grid=search_parameter, n_jobs=-1, cv=3)
+=======
+grid = GridSearchCV(estimator=model, param_grid=search_parameter, n_jobs=-1, cv=5)
+>>>>>>> 1d17095b9bdb7d5d42fd5c80d889ede04da21c7f
 
 
 grid_result = grid.fit(X_train, y_train)
 
 
 
+<<<<<<< HEAD
 best_accuracy = grid_result.best_score_
 best_parameters = grid_result.best_params_
 best_index = grid_result.best_index_
 best_cv_result = grid_result.cv_results_
 number_split = grid_result.n_splits_
+=======
+best_accuracy = grid.best_score_
+best_parameters = grid.best_params_
+best_index = grid.best_index_
+best_cv_result = grid.cv_results_
+number_split = grid.n_splits_
+>>>>>>> 1d17095b9bdb7d5d42fd5c80d889ede04da21c7f
 
 print(f"##################### Result of {number_split}-Fold Cross validation #####################\n\n")
 print("BEST ACCURACY: {:.2f} %".format(best_accuracy*100))
