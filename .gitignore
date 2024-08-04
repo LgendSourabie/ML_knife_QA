@@ -1,3 +1,7 @@
 /data
 /deep_learning/classification/hyperparameter_tuning_classifier
 /deep_learning/regression/hyperparameter_tuning_regressor
+/deep_learning/classification/old_tuning_classifier
+/deep_learning/regression/old_tuning_regressor
+/deep_learning/regression/regression.ipynb
+/deep_learning/classification/random_search.ipynb

@@ -1,0 +1,32 @@
+##################### REPORT OF HYPERPARAMETER TUNING: RANDOM SEARCH #####################
+
+BEST PARAMETERS:
+ +-----------------+--------------------------+--------------------------+--------------------------+--------------------------+
+| Parameter names | 1st best hyperparameters | 2nd best hyperparameters | 3rd best hyperparameters | 4th best hyperparameters |
++-----------------+--------------------------+--------------------------+--------------------------+--------------------------+
+|     hidden_1    |           1016           |           360            |           600            |           312            |
+|   activation_1  |           elu            |           selu           |           relu           |           selu           |
+|       l2_1      |           0.0            |           0.05           |           0.0            |           0.03           |
+|     hidden_2    |           408            |           568            |           136            |           280            |
+|   activation_2  |           selu           |           relu           |        leaky_relu        |           relu           |
+|       l2_2      |           0.05           |           0.07           |           0.04           |           0.0            |
+|     hidden_3    |            24            |           744            |           408            |           328            |
+|   activation_3  |           relu           |           elu            |           elu            |        leaky_relu        |
+|       l2_3      |           0.05           |           0.0            |           0.0            |           0.01           |
+|     hidden_4    |           920            |           264            |            72            |           200            |
+|   activation_4  |           relu           |           selu           |        leaky_relu        |           relu           |
+|       l2_4      |           0.1            |           0.1            |           0.05           |           0.01           |
+|     hidden_5    |           296            |           648            |           168            |           888            |
+|   activation_5  |           selu           |           relu           |           elu            |           relu           |
+|       l2_5      |           0.01           |           0.0            |           0.06           |           0.05           |
+|     hidden_6    |           344            |           728            |           328            |           616            |
+|   activation_6  |           relu           |        leaky_relu        |           selu           |           selu           |
+|       l2_6      |           0.03           |           0.08           |           0.04           |           0.01           |
+|  activation_out |           elu            |        leaky_relu        |           selu           |           elu            |
+|    optimizer    |         rmsprop          |          nadam           |           adam           |          nadam           |
+|  learning_rate  |          0.0001          |          0.001           |          0.001           |          0.001           |
+|       END       |           END            |           END            |           END            |           END            |
++-----------------+--------------------------+--------------------------+--------------------------+--------------------------+
+|   BEST SCORES   |            1             |            5             |            7             |            8             |
++-----------------+--------------------------+--------------------------+--------------------------+--------------------------+
+

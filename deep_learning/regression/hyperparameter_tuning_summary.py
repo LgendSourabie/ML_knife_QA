@@ -1,16 +1,17 @@
 import keras_tuner as kt
-from model_build import DeepClassifierModel
+from regressor_model_build import DeepRegressionModel
+from random_search_regressor import save_in_table
 
 
-directory = "hyperparameter_tuning_classifier"
-project_name = "knife_classifier"
+directory = "hyperparameter_tuning_regressor"
+project_name = "knife_regressor"
 
 
-classifier = DeepClassifierModel(30)
+regressor = DeepRegressionModel(30)
 
 tuner = kt.RandomSearch(
-    hypermodel=classifier.build_model,
-    objective='val_accuracy',
+    hypermodel=regressor.build_model,
+    objective=kt.Objective("val_r_squared", direction="max"),
     max_trials=1,
     executions_per_trial=1,
     overwrite=False,  
@@ -19,11 +20,21 @@ tuner = kt.RandomSearch(
 )
 
 
-models = tuner.get_best_models(num_models=2)
-models[0].summary()
+def get_best_models(rank_index=0):
+    models = tuner.get_best_models(num_models=rank_index + 2)
+    return models[rank_index].summary()
 
-tuner.results_summary()
+def get_tuning_summary():
+    return tuner.results_summary()
+    
+def get_best_parameter():
+    return tuner.get_best_hyperparameters(4)
 
-best_params = tuner.get_best_hyperparameters()[0].values
+def get_best_hyperparameter(var = tuner):
+    best_params = var.get_best_hyperparameters()[0].values
+    return best_params
 
-print(best_params)
+get_best_models()
+get_tuning_summary()
+get_best_hyperparameter()
+save_in_table(best_parameters=get_best_parameter())

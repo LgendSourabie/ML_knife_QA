@@ -1,5 +1,5 @@
 import keras_tuner as kt
-from model_build import DeepClassifierModel
+from classification_model_build import DeepClassifierModel
 
 
 directory = "hyperparameter_tuning_classifier"
@@ -26,12 +26,14 @@ def get_best_models(rank_index=0):
 
 def get_tuning_summary():
     return tuner.results_summary()
-    
+
+def get_best_parameter():
+    return tuner.get_best_hyperparameters(4)
 
 def get_best_hyperparameter(var = tuner):
     best_params = var.get_best_hyperparameters()[0].values
     return best_params
 
-print(get_best_models())
-print(get_tuning_summary())
-print(get_best_hyperparameter())
+get_best_models()
+get_tuning_summary()
+get_best_hyperparameter()

@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler, LabelEncoder
-from model_build import DeepClassifierModel
+from deep_learning.classification.classification_model_build import DeepClassifierModel
 
 import matplotlib.pyplot as plt
 
