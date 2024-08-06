@@ -25,9 +25,9 @@ y_regressor = dataset['Ra'].values
 
 """#Encoding categorical data"""
 
-le = LabelEncoder()
-y_classifier = le.fit_transform(y_classifier)
-
+# le = LabelEncoder()
+# y_classifier = le.fit_transform(y_classifier)
+y_classifier = np.where(y_classifier == 'good', 0, 1)
 """#Splitting dataset into training and test set"""
 
 def get_split_dataset(regressor=True,min_max_scaler=True, X=X, y_regressor=y_regressor, y_classifier=y_classifier,test_size=0.2, rnd_state=1):

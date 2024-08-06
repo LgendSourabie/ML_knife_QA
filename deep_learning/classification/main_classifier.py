@@ -6,18 +6,33 @@ from sklearn.metrics import confusion_matrix, accuracy_score, recall_score, prec
 import tensorflow as tf
 import numpy as np
 import pandas as pd
-
+import seaborn as sns
 
 
 X_train, X_test, y_train, y_test = get_split_dataset(regressor=False,min_max_scaler=True)
 
+##############################################################
+# from imblearn.over_sampling import SMOTE
+# from collections import Counter
+# # Create the SMOTE object
+# smote = SMOTE(random_state=42)
+
+# # Resample the dataset
+# X_train, y_train = smote.fit_resample(X_train, y_train)
+
+# # Check the class distribution
+# print(f'Original dataset shape: {Counter(y_train)}')
+# print(f'Resampled dataset shape: {Counter(y_resampled)}')
+##############################################################
 
 classifier = DeepClassifierModel(input_dim=X_train.shape[1])
-best_parameters = get_best_parameter()
+best_parameters = get_best_parameter()[0]
 
 ######## take secon model
+# best_parameters.values['optimizer'] = 'adam'
+# best_parameters.values['learning_rate'] = 0.00001
 
-model = classifier.build_model(best_parameters[0])
+model = classifier.build_model(best_parameters)
 
 earlystop = tf.keras.callbacks.EarlyStopping(monitor = 'val_loss', 
                           min_delta = 0, 
@@ -31,9 +46,10 @@ checkpoint = tf.keras.callbacks.ModelCheckpoint("checkpoint.model.keras",
                              save_best_only = True,
                              verbose=1)
 
-callbacks = [earlystop, checkpoint]
+callbacks = [checkpoint]
+# callbacks = [earlystop, checkpoint]
 
-history = model.fit(X_train, y_train, batch_size=8,callbacks=callbacks, epochs=15, validation_split=0.15)
+history = model.fit(X_train, y_train,batch_size=8,callbacks=callbacks, epochs=100, validation_split=0.2)
 
 # prediction
 
@@ -50,7 +66,7 @@ score = model.evaluate(X_test, y_test, verbose=0)
 
 #Metrics of  the model
 
-matrix_conf=confusion_matrix(y_test, y_pred.round())
+confusion_matrix=confusion_matrix(y_test, y_pred.round())
 accuracy_model=accuracy_score(y_test, y_pred.round())
 recall_model=recall_score(y_test, y_pred.round())
 precision_model=precision_score(y_test, y_pred.round())
@@ -61,7 +77,7 @@ print(f'accuracy_model  : {round(accuracy_model*100,2)}')
 print(f'recall_model    : {round(recall_model*100,2)}')
 print(f'precision_model : {round(precision_model*100,2)}')
 print(f'f1_model        : {round(f1_model*100,2)}')
-print(f"confusion matrix: \n{matrix_conf}")
+print(f"confusion matrix: \n{confusion_matrix}")
 
 
 with open('metrics_eval_summary.txt', 'w+') as file:
@@ -111,9 +127,22 @@ val_f1_score = 2 * (val_precision * val_recall)/(val_precision + val_recall)
 plt.subplot(224)
 plt.plot(f1_score, label='Training F1_Score', linewidth=2)
 plt.plot(val_f1_score, label='Validation F1_Score', linewidth=2)
-plt.title('F1_Score', fontsize=18)
+plt.title('F1_Scores', fontsize=18)
 plt.ylabel('f1_score [-]', fontsize=12)
 plt.xlabel('Epoch [-]', fontsize=12)
 plt.legend(fontsize=12)
 plt.savefig(f'performance_classifier.png', dpi=300)
 
+plt.figure(figsize=(10, 7))
+group_names = ["Bad and predicted as Bad","Bad but predicted as Good","Good but predicted as Bad","Good and predicted as Good"]
+group_counts = ["{0:0.0f}".format(value) for value in confusion_matrix.flatten()]
+
+group_percentages = ["{0:.2%}".format(value) for value in confusion_matrix.flatten()/np.sum(confusion_matrix)]
+labels = [f"{v1}\n\n{v2}\n\n{v3}" for v1, v2, v3 in zip(group_counts,group_percentages,group_names)]
+labels = np.asarray(labels).reshape(2,2)
+sns.heatmap(confusion_matrix, annot=labels, xticklabels=['Bad products', 'Good Products'], yticklabels=['Bad products', 'Good products'], fmt="", cmap='Blues')
+plt.xlabel('Predicted values', fontsize=16)
+plt.ylabel('Actual values', fontsize=16)
+plt.gca().xaxis.set_ticks_position('top')
+plt.gca().xaxis.set_label_position('top')
+plt.savefig(f'confusion_matrix.png', dpi=300)

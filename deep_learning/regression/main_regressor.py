@@ -31,9 +31,9 @@ checkpoint = tf.keras.callbacks.ModelCheckpoint("checkpoint.model.keras",
                              save_best_only = True,
                              verbose=1)
 
-callbacks = [earlystop,checkpoint]
+callbacks = [checkpoint]
 
-history = model.fit(X_train, y_train, batch_size=8,callbacks = callbacks,verbose=2, epochs=150, validation_split=0.15)
+history = model.fit(X_train, y_train, batch_size=8,callbacks = callbacks,verbose=1, epochs=100, validation_split=0.15)
 
 # prediction
 
@@ -65,7 +65,7 @@ with open('metrics_eval_summary.txt', 'w+') as file:
 
 
 
-plt.figure(figsize=(15, 8))
+plt.figure(figsize=(18, 8))
 
 plt.subplot(131)
 plt.plot(history.history['loss'], label='Training loss', linewidth=2)
@@ -84,7 +84,7 @@ plt.legend(fontsize=12)
 plt.subplot(133)
 plt.plot(history.history['mean_squared_error'], label='Training mse', linewidth=2)
 plt.plot(history.history['val_mean_squared_error'], label='Validation mse', linewidth=2)
-plt.title('Mean Squared Error', fontsize=20)
+plt.title('Mean Squared Errors', fontsize=20)
 plt.ylabel('MSE [-]', fontsize=12)
 plt.xlabel('Epoch [-]', fontsize=12)
 plt.legend(fontsize=12)
@@ -101,7 +101,7 @@ plt.ylabel('Ra values [-]', fontsize=12)
 plt.legend(fontsize=12)
 plt.savefig('regressor_error.png', dpi=300)
 
-plt.figure(figsize=(10, 6))
+plt.figure(figsize=(15, 8))
 
 plt.axvline(LOWER_SPECIFICATION_LIMIT,color='black', linewidth=4)
 plt.axvline(UPPER_SPECIFICATION_LIMIT,color='black',linewidth=4)

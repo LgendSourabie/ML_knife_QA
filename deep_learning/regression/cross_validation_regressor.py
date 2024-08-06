@@ -1,12 +1,13 @@
 
 from hyperparameter_tuning_summary import get_best_hyperparameter
-from regressor_model_build import DeepRegressionModel
+from regressor_model_build import DeepRegressionModel, set_activation
 from feature_label import get_split_dataset
 import matplotlib.pyplot as plt
 import tensorflow as tf
 import numpy as np
 from scikeras.wrappers import KerasRegressor
 from sklearn.model_selection import cross_validate
+from prettytable import PrettyTable
 
 
 X_train, X_test, y_train, y_test = get_split_dataset(regressor=True,min_max_scaler=True)
@@ -24,27 +25,27 @@ def create_model(best_hyperparameter=best_hyperparameter):
       """
       model = tf.keras.models.Sequential()
 
-      model.add(tf.keras.layers.Dense(units=best_hyperparameter['hidden_1'],activation=tf.keras.layers.ELU(),input_dim=X_train.shape[1]))
+      model.add(tf.keras.layers.Dense(units=best_hyperparameter['hidden_1'],activation=set_activation(best_hyperparameter['activation_1']),input_dim=X_train.shape[1]))
       tf.keras.regularizers.L2(best_hyperparameter['l2_1'])
 
-      model.add(tf.keras.layers.Dense(units=best_hyperparameter['hidden_2'],activation=best_hyperparameter['activation_2']))
+      model.add(tf.keras.layers.Dense(units=best_hyperparameter['hidden_2'],activation=set_activation(best_hyperparameter['activation_2'])))
       tf.keras.regularizers.L2(best_hyperparameter['l2_2'])
 
-      model.add(tf.keras.layers.Dense(units=best_hyperparameter['hidden_3'],activation=best_hyperparameter['activation_3']))
+      model.add(tf.keras.layers.Dense(units=best_hyperparameter['hidden_3'],activation=set_activation(best_hyperparameter['activation_3'])))
       tf.keras.regularizers.L2(best_hyperparameter['l2_3'])
 
-      model.add(tf.keras.layers.Dense(units=best_hyperparameter['hidden_4'],activation=best_hyperparameter['activation_4']))
+      model.add(tf.keras.layers.Dense(units=best_hyperparameter['hidden_4'],activation=set_activation(best_hyperparameter['activation_4'])))
       tf.keras.regularizers.L2(best_hyperparameter['l2_4'])
 
-      model.add(tf.keras.layers.Dense(units=best_hyperparameter['hidden_5'],activation=tf.keras.layers.ELU()))
+      model.add(tf.keras.layers.Dense(units=best_hyperparameter['hidden_5'],activation=set_activation(best_hyperparameter['activation_5'])))
       tf.keras.regularizers.L2(best_hyperparameter['l2_5'])
 
-      model.add(tf.keras.layers.Dense(units=best_hyperparameter['hidden_6'],activation=best_hyperparameter['activation_6']))
+      model.add(tf.keras.layers.Dense(units=best_hyperparameter['hidden_6'],activation=set_activation(best_hyperparameter['activation_6'])))
       tf.keras.regularizers.L2(best_hyperparameter['l2_6'])
 
-      model.add(tf.keras.layers.Dense(units= 1, activation =best_hyperparameter['activation_out']))
+      model.add(tf.keras.layers.Dense(units= 1, activation =set_activation(best_hyperparameter['activation_out'])))
 
-      model.compile(optimizer =tf.keras.optimizers.Adam(learning_rate=best_hyperparameter['learning_rate']) ,
+      model.compile(optimizer = deep_regressor_model.set_optimizer(best_hyperparameter['optimizer'],best_hyperparameter['learning_rate']) ,
                     loss='mean_squared_error',metrics=[tf.keras.metrics.R2Score(name='r_squared'), tf.keras.metrics.MeanSquaredError(name='mean_squared_error')])
       return model
 
@@ -58,38 +59,41 @@ cv_folds = 10
 scoring = {'r2': 'r2', 'mse': 'neg_mean_squared_error'}
 results = cross_validate(estimator=model, X=X_train, y=y_train, cv=cv_folds, scoring=scoring, n_jobs=-1, return_train_score=True)
 
-r2_scores = results['test_r2']
-mse_scores = results['test_mse']  
+r2_scores = results['test_r2']*100
+mse_scores = results['test_mse']*100  
 
 mean_r2 = np.mean(r2_scores)
 std_r2 = np.std(r2_scores)
-
 mean_mse = -np.mean(mse_scores)  # we Convert negative MSE to positive, since use neg_mean_square_error
 std_mse = np.std(mse_scores)
 
+table = PrettyTable()
+table.add_column('Folds',list(np.arange(1,cv_folds+1)))
+table.add_column('R² Score [%]',list(np.round(r2_scores*100,2)))
+table.add_column('MSE [%]',list(np.round(mse_scores*100,2)))
 
-print("R² scores for each fold:", r2_scores)
-print("MSE scores for each fold:", -mse_scores)
+
+print(f"R² scores for each fold: {r2_scores:.2f}")
+print(f"MSE scores for each fold: {-mse_scores:.2f}")
 
 
 for index, (score_val,mse_val) in enumerate(zip(r2_scores,-mse_scores)):
-    print(f'Fold {index+1}: R²= {round(score_val,2)} MSE= {round(mse_val,6)}')
+    print(f'Fold {index+1}: R²= {score_val:.2f} MSE= {mse_val:.2f}')
 
 
 print('\n\n')
-print(f'Mean R²: {round(mean_r2,4)}')
-print(f'Standard Deviation of R²: {round(std_r2,5)}')
-print(f'Mean MSE: {round(mean_mse,6)}')
-print(f'Standard Deviation of MSE: {round(std_mse,6)}')
+print(f'Mean R²: {mean_r2:.2f} %')
+print(f'Standard Deviation of R²: {std_r2:.2f} %')
+print(f'Mean MSE: {mean_mse:.2f} %')
+print(f'Standard Deviation of MSE: {std_mse:.2f} %')
 
 with open('cross_validation_summary.txt', 'w+') as file:
 
     file.write(f"################### RESULT OF {cv_folds}-Folds CROSS VALIDATION ###################\n\n")
-    for index, (score_val,mse_val) in enumerate(zip(r2_scores,-mse_scores)):
-         file.write(f'Fold {index+1}: R²= {round(score_val,2)} MSE= {round(mse_val,6)}')
 
-    file.write(f'\n\nMean R²: {round(mean_r2,4)}')
-    file.write(f'Standard Deviation of R²: {round(std_r2,5)}')
-    file.write(f'Mean MSE: {round(mean_mse,6)}')
-    file.write(f'Standard Deviation of MSE: {round(std_mse,6)}')
-    
+    file.write(f"{table}")
+    file.write(f'\n\nMean R²: {mean_r2:.2f} %\n')
+    file.write(f'Standard Deviation of R²: {std_r2:.2f} %\n')
+    file.write(f'Mean MSE: {mean_mse:.2f} %\n')
+    file.write(f'Standard Deviation of MSE: {std_mse:.2f} %\n')
+        

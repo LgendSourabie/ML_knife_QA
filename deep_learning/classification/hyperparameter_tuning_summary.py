@@ -3,7 +3,7 @@ from classification_model_build import DeepClassifierModel
 
 
 directory = "hyperparameter_tuning_classifier"
-project_name = "knife_classifier"
+project_name = "knife_classifier_2"
 
 
 classifier = DeepClassifierModel(30)
@@ -31,9 +31,10 @@ def get_best_parameter():
     return tuner.get_best_hyperparameters(4)
 
 def get_best_hyperparameter(var = tuner):
-    best_params = var.get_best_hyperparameters()[0].values
+    best_params = var.get_best_hyperparameters(5)[0].values
     return best_params
 
 get_best_models()
 get_tuning_summary()
 get_best_hyperparameter()
+

@@ -25,6 +25,10 @@ class DeepClassifierModel:
         self.neurons_max = 1024
         self.neurons_min = 32
         self.neurons_step = 16
+        self.l2_min = 0.0
+        self.l2_max = 0.1
+        self.l2_step = 0.05
+        self.layers = [2,3,4,5,6,7,8,9,10]
         self.learning_rates = [1e-2, 1e-3, 1e-4, 1e-5]
         self.activation_name = ['relu', 'tanh', 'selu', 'leaky_relu']
         self.optimizer_name = ['adam', 'nadam', 'rmsprop']
@@ -36,31 +40,24 @@ class DeepClassifierModel:
       """
         model = tf.keras.models.Sequential()
 
+        # Input layer
         model.add(tf.keras.layers.Dense(
-            units=hp.Int('hidden_1', min_value=self.neurons_min, max_value=self.neurons_max, step=self.neurons_step),
+            units=hp.Int('input_neurons', min_value=self.neurons_min, max_value=self.neurons_max, step=self.neurons_step),
             activation=set_activation(hp.Choice('activation_1', values=self.activation_name)),
+            kernel_regularizer=tf.keras.regularizers.L2(hp.Float('l2_1', min_value=self.l2_min, max_value=self.l2_max, step=self.l2_step)),
             input_dim=self.input_dim))
 
-        model.add(tf.keras.layers.Dense(
-            units=hp.Int('hidden_2', min_value=self.neurons_min, max_value=self.neurons_max, step=self.neurons_step),
-            activation=set_activation(hp.Choice('activation_2', values=self.activation_name))))
+        # Number of hidden layers
+        num_layers = hp.Choice('num_layers', values=self.layers)
+        
+        for i in range(2, num_layers + 1):
+            model.add(tf.keras.layers.Dense(
+                units=hp.Int(f'hidden_neuron_{i}', min_value=self.neurons_min, max_value=self.neurons_max, step=self.neurons_step),
+                activation=set_activation(hp.Choice(f'activation_{i}', values=self.activation_name)),
+                kernel_regularizer=tf.keras.regularizers.L2(hp.Float(f'l2_{i}', min_value=self.l2_min, max_value=self.l2_max, step=self.l2_step))
+            ))
 
-        model.add(tf.keras.layers.Dense(
-            units=hp.Int('hidden_3', min_value=self.neurons_min, max_value=self.neurons_max, step=self.neurons_step),
-            activation=set_activation(hp.Choice('activation_3', values=self.activation_name))))
-        
-        model.add(tf.keras.layers.Dense(
-            units=hp.Int('hidden_4', min_value=self.neurons_min, max_value=self.neurons_max, step=self.neurons_step),
-            activation=set_activation(hp.Choice('activation_4', values=self.activation_name))))
-        
-        model.add(tf.keras.layers.Dense(
-            units=hp.Int('hidden_5', min_value=self.neurons_min, max_value=self.neurons_max, step=self.neurons_step),
-            activation=set_activation(hp.Choice('activation_5', values=self.activation_name))))
-        
-        model.add(tf.keras.layers.Dense(
-            units=hp.Int('hidden_6', min_value=self.neurons_min, max_value=self.neurons_max, step=self.neurons_step),
-            activation=set_activation(hp.Choice('activation_6', values=self.activation_name))))
-
+        # Output layer
         model.add(tf.keras.layers.Dense(units=1, activation='sigmoid'))
 
         model.compile(optimizer=self.set_optimizer(hp.Choice('optimizer', values=self.optimizer_name),hp.Choice('learning_rate', values=self.learning_rates)),
