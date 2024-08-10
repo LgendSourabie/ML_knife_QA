@@ -4,29 +4,36 @@ BEST PARAMETERS:
  +-----------------+--------------------------+--------------------------+--------------------------+--------------------------+
 | Parameter names | 1st best hyperparameters | 2nd best hyperparameters | 3rd best hyperparameters | 4th best hyperparameters |
 +-----------------+--------------------------+--------------------------+--------------------------+--------------------------+
-|     hidden_1    |           1016           |           360            |           600            |           312            |
-|   activation_1  |           elu            |           selu           |           relu           |           selu           |
-|       l2_1      |           0.0            |           0.05           |           0.0            |           0.03           |
-|     hidden_2    |           408            |           568            |           136            |           280            |
-|   activation_2  |           selu           |           relu           |        leaky_relu        |           relu           |
-|       l2_2      |           0.05           |           0.07           |           0.04           |           0.0            |
-|     hidden_3    |            24            |           744            |           408            |           328            |
-|   activation_3  |           relu           |           elu            |           elu            |        leaky_relu        |
-|       l2_3      |           0.05           |           0.0            |           0.0            |           0.01           |
-|     hidden_4    |           920            |           264            |            72            |           200            |
-|   activation_4  |           relu           |           selu           |        leaky_relu        |           relu           |
-|       l2_4      |           0.1            |           0.1            |           0.05           |           0.01           |
-|     hidden_5    |           296            |           648            |           168            |           888            |
-|   activation_5  |           selu           |           relu           |           elu            |           relu           |
-|       l2_5      |           0.01           |           0.0            |           0.06           |           0.05           |
-|     hidden_6    |           344            |           728            |           328            |           616            |
-|   activation_6  |           relu           |        leaky_relu        |           selu           |           selu           |
-|       l2_6      |           0.03           |           0.08           |           0.04           |           0.01           |
-|  activation_out |           elu            |        leaky_relu        |           selu           |           elu            |
-|    optimizer    |         rmsprop          |          nadam           |           adam           |          nadam           |
+|     hidden_1    |           472            |           696            |            72            |           936            |
+|   activation_1  |           selu           |        leaky_relu        |           selu           |        leaky_relu        |
+|       l2_1      |           0.04           |           0.15           |           0.09           |           0.04           |
+|    num_layers   |            6             |            4             |            8             |            8             |
+|     hidden_2    |           456            |           264            |           536            |           792            |
+|   activation_2  |           selu           |           elu            |           selu           |           selu           |
+|       l2_2      |           0.1            |           0.17           |           0.05           |           0.15           |
+|  activation_out |        leaky_relu        |           elu            |           selu           |        leaky_relu        |
+|    optimizer    |         rmsprop          |          nadam           |          nadam           |          nadam           |
 |  learning_rate  |          0.0001          |          0.001           |          0.001           |          0.001           |
-|       END       |           END            |           END            |           END            |           END            |
-+-----------------+--------------------------+--------------------------+--------------------------+--------------------------+
-|   BEST SCORES   |            1             |            5             |            7             |            8             |
+|     hidden_3    |            8             |           760            |           344            |           360            |
+|   activation_3  |        leaky_relu        |        leaky_relu        |           relu           |           selu           |
+|       l2_3      |           0.01           |           0.18           |           0.04           |           0.15           |
+|     hidden_4    |           200            |           312            |           232            |           184            |
+|   activation_4  |           elu            |           relu           |           selu           |           elu            |
+|       l2_4      |           0.1            |           0.27           |           0.18           |           0.11           |
+|     hidden_5    |           216            |           328            |           1016           |           344            |
+|   activation_5  |           selu           |           selu           |           relu           |           selu           |
+|       l2_5      |           0.03           |           0.28           |           0.08           |           0.15           |
+|     hidden_6    |            8             |           200            |           856            |           104            |
+|   activation_6  |           relu           |        leaky_relu        |           relu           |        leaky_relu        |
+|       l2_6      |           0.19           |           0.24           |           0.0            |           0.14           |
+|     hidden_7    |           696            |           392            |           392            |           408            |
+|   activation_7  |        leaky_relu        |           elu            |           selu           |           relu           |
+|       l2_7      |           0.09           |           0.1            |           0.03           |           0.03           |
+|     hidden_8    |           488            |           728            |           184            |           536            |
+|   activation_8  |        leaky_relu        |           relu           |        leaky_relu        |           relu           |
+|       l2_8      |           0.19           |           0.24           |           0.14           |           0.14           |
+|     hidden_9    |           264            |            72            |           456            |           824            |
+|   activation_9  |           selu           |        leaky_relu        |           relu           |           relu           |
+|       l2_9      |           0.24           |           0.23           |           0.01           |           0.0            |
 +-----------------+--------------------------+--------------------------+--------------------------+--------------------------+
 

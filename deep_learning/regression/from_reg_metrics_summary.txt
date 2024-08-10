@@ -1,0 +1,14 @@
+################### RESULT OF PREDICTION ###################
+
+ accuracy  : 68.27 %
+ Recall    : 53.96 %
+ Precision : 71.14 %
+ F1-Score  :               precision    recall  f1-score   support
+
+           0       0.67      0.81      0.73       907
+           1       0.71      0.54      0.61       795
+
+    accuracy                           0.68      1702
+   macro avg       0.69      0.67      0.67      1702
+weighted avg       0.69      0.68      0.68      1702
+ %

@@ -10,7 +10,7 @@ from sklearn.model_selection import cross_validate
 from prettytable import PrettyTable
 
 
-X_train, X_test, y_train, y_test = get_split_dataset(regressor=True,min_max_scaler=True)
+X_train, X_test, y_train, y_test = get_split_dataset(regressor=True,min_max_scaler=False)
 
 
 deep_regressor_model = DeepRegressionModel(X_train.shape[1])
@@ -28,20 +28,13 @@ def create_model(best_hyperparameter=best_hyperparameter):
       model.add(tf.keras.layers.Dense(units=best_hyperparameter['hidden_1'],activation=set_activation(best_hyperparameter['activation_1']),input_dim=X_train.shape[1]))
       tf.keras.regularizers.L2(best_hyperparameter['l2_1'])
 
-      model.add(tf.keras.layers.Dense(units=best_hyperparameter['hidden_2'],activation=set_activation(best_hyperparameter['activation_2'])))
-      tf.keras.regularizers.L2(best_hyperparameter['l2_2'])
+    # Number of hidden layers
+      num_layers = best_hyperparameter['num_layers'] 
+        
+      for i in range(2, num_layers + 1):
 
-      model.add(tf.keras.layers.Dense(units=best_hyperparameter['hidden_3'],activation=set_activation(best_hyperparameter['activation_3'])))
-      tf.keras.regularizers.L2(best_hyperparameter['l2_3'])
-
-      model.add(tf.keras.layers.Dense(units=best_hyperparameter['hidden_4'],activation=set_activation(best_hyperparameter['activation_4'])))
-      tf.keras.regularizers.L2(best_hyperparameter['l2_4'])
-
-      model.add(tf.keras.layers.Dense(units=best_hyperparameter['hidden_5'],activation=set_activation(best_hyperparameter['activation_5'])))
-      tf.keras.regularizers.L2(best_hyperparameter['l2_5'])
-
-      model.add(tf.keras.layers.Dense(units=best_hyperparameter['hidden_6'],activation=set_activation(best_hyperparameter['activation_6'])))
-      tf.keras.regularizers.L2(best_hyperparameter['l2_6'])
+          model.add(tf.keras.layers.Dense(units=best_hyperparameter[f'hidden_{i}'],activation=set_activation(best_hyperparameter[f'activation_{i}'])))
+          tf.keras.regularizers.L2(best_hyperparameter[f'l2_{i}'])
 
       model.add(tf.keras.layers.Dense(units= 1, activation =set_activation(best_hyperparameter['activation_out'])))
 
@@ -69,12 +62,12 @@ std_mse = np.std(mse_scores)
 
 table = PrettyTable()
 table.add_column('Folds',list(np.arange(1,cv_folds+1)))
-table.add_column('R² Score [%]',list(np.round(r2_scores*100,2)))
-table.add_column('MSE [%]',list(np.round(mse_scores*100,2)))
+table.add_column('R² Score [%]',list(np.round(r2_scores,2)))
+table.add_column('MSE [%]',list(np.round(mse_scores,2)))
 
 
-print(f"R² scores for each fold: {r2_scores:.2f}")
-print(f"MSE scores for each fold: {-mse_scores:.2f}")
+print(f"R² scores for each fold: {np.round(r2_scores,2)}")
+print(f"MSE scores for each fold: {np.round(-mse_scores,2)}")
 
 
 for index, (score_val,mse_val) in enumerate(zip(r2_scores,-mse_scores)):

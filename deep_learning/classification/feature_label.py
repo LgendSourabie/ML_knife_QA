@@ -3,7 +3,6 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler,MinMaxScaler, LabelEncoder
 
-
 """#Importing data"""
 
 dataset = pd.read_excel('../../data/chiefs_knife_dataset.xlsx')
@@ -25,9 +24,8 @@ y_regressor = dataset['Ra'].values
 
 """#Encoding categorical data"""
 
-# le = LabelEncoder()
-# y_classifier = le.fit_transform(y_classifier)
 y_classifier = np.where(y_classifier == 'good', 0, 1)
+
 """#Splitting dataset into training and test set"""
 
 def get_split_dataset(regressor=True,min_max_scaler=True, X=X, y_regressor=y_regressor, y_classifier=y_classifier,test_size=0.2, rnd_state=1):
@@ -44,4 +42,6 @@ def get_split_dataset(regressor=True,min_max_scaler=True, X=X, y_regressor=y_reg
     else:
         X_train = sc.fit_transform(X_train)
         X_test  = sc.transform(X_test)
+
+    # we Resample the dataset to balance the classes
     return X_train, X_test, y_train, y_test
