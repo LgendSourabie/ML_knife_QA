@@ -1,0 +1,7 @@
+################### RESULT OF PREDICTION ###################
+
+ Test loss : 0.53708
+ accuracy  : 72.86 %
+ Recall    : 58.99 %
+ Precision : 77.52 %
+ F1-Score  : 67.0 %

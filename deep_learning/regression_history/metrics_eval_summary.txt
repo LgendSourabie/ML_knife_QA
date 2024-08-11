@@ -1,0 +1,5 @@
+################### RESULT OF PREDICTION ###################
+
+ Test loss: 0.00137
+ Mean Square Error: 0.00137
+ R2Score: 69.61 %
